@@ -1,0 +1,39 @@
+Install and start:
+=====================
+
+1. Download the streamsets tar and extract.
+2. cd streamsets-datacollector-2.8.0.0-SNAPSHOT/bin
+3. Start the streamsets,
+    ./streamsets dc
+4. Login to webportal,
+    localhost:18630
+5. Drag and drop the required stage and run the pipeline.
+
+
+Custom Stage:
+==================
+1. Download the custom origin sample jar using maven.
+  mvn archetype:generate -DarchetypeGroupId=com.streamsets -DarchetypeArtifactId=streamsets-datacollector-stage-lib-tutorial \
+  -DarchetypeVersion=2.2.0.0 -DinteractiveMode=true
+
+Define value for property 'groupId': : com.anand
+Define value for property 'artifactId': : sampleorigin
+Define value for property 'version':  1.0-SNAPSHOT: :
+Define value for property 'package':  com.example: :
+
+
+Maven generates a template project from the archetype in a directory with the artifactId you provided as its name.
+It will have template code for an origin, a processor and a destination.
+
+Custom Origin:
+================
+
+1. cd sampleorigin  [ sampleorigin is artifactid/folder name ]
+2. mvn clean package -DskipTests
+3. Above command will generate target folder which has tar(sampleorigin-1.0-SNAPSHOT.tar.gz)
+4. Go the streamsets user-libs directory.
+   cd  streamsets-datacollector-2.8.0.0-SNAPSHOT/user-libs/
+5. Extract the tar into user-libs directory.
+   tar xvzf /Users/nwe.nganesan/Desktop/GitHub/streamsets/custom_anand_plugin/sampleorigin/target/sampleorigin-1.0-SNAPSHOT.tar.gz
+6. Now, custom stage tar is extracted into the user-libs folder.
+7. Re-start the datacollector and you can find your custom origin in UI.

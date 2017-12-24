@@ -1,0 +1,91 @@
+Pipeline:
+==========
+
+A pipeline describes the flow of data from the origin system to destination systems and defines how to transform the data along the way.
+
+To process large volumes of data from a Kafka cluster or HDFS, you can configure a pipeline to run in cluster execution mode.
+
+The origin creates a batch as it reads data from the origin system or as data arrives from the origin system, noting the offset. The offset is the location where the origin stops reading.
+
+The origin sends the batch when the batch is full or when the batch wait time limit elapses. The batch moves through the pipeline from processor to processor until it reaches pipeline destinations.
+
+
+Single and Multithreaded Pipelines
+===================================
+Some origins can generate multiple threads to enable parallel processing in multithreaded pipelines. In a multithreaded pipeline, you configure the origin to create the number of threads or amount of concurrency that you want to use. And Data Collector creates a number of pipeline runners based on the pipeline Max Runners property to perform pipeline processing. Each thread connects to the origin system and creates a batch of data, and passes the batch to an available pipeline runner.
+
+Dropping Unwanted Records:
+===========================
+
+Required Fields: For example, if a Field Hasher encodes social security data in the /SSN field. To ensure all records include social security numbers, you can make /SSN a required field for the stage.
+
+
+Preconditions: For example, you might use the following expression to exclude records that originate from outside the United States: ${record:value('/COUNTRY') == 'US'}
+
+Error Record Handling:
+===========================
+You can configure error record handling at a stage level and at a pipeline level.
+When you configure a pipeline, be aware that stage error handling takes precedence over pipeline error handling. 
+
+Field Attributes:
+===============================
+
+Field attributes are attributes that provide additional information about each field that you can use in pipeline logic, as needed.
+You can create, modify, and evaluate field attributes in the pipeline. The Expression Evaluator enables creating and modifying field-level attributes. 
+You can use field attribute functions to evaluate field attributes.
+
+To include field attributes in the record data or to use field attributes in calculations, use the record:fieldAttribute and record:fieldAttributeOrDefault functions.
+
+
+${record:fieldAttribute(<path to the field>,'<attribute name>')}
+
+Example to add new calculated field using expression evaluator.
+
+${record:value(‘/cost’) + (record:value(‘/cost’)*.2)}
+
+
+Runtime Values:
+====================
+
+Runtime values are values that you define outside of the pipeline and use for stage and pipeline properties. 
+You can change the values for each pipeline run without having to edit the pipeline.
+
+Runtime parameters:
+Use runtime parameters when you want to specify the values for pipeline properties when you start the pipeline.
+You define runtime parameters when you configure the pipeline, and then you call the parameters from within that pipeline. 
+When you start the pipeline, you specify the parameter values to use.
+
+Runtime properties:
+Use runtime properties when you want to define values for multiple pipeline properties in a file.
+
+Runtime resources:
+Use runtime resources when you want to secure sensitive information in files with restricted permissions.
+
+Event Generation:
+====================
+
+The event framework generates events when the pipeline starts and stops. You can pass the event to an executor or to another pipeline for additional processing.
+
+sdc.event.type	Event type. Uses one of the following types:
+start - Generated as the pipeline starts.
+stop - Generated as the pipeline stops.
+sdc.event.version	An integer that indicates the version of the event record type.
+sdc.event.creation_timestamp	Epoch timestamp when the stage created the event.
+
+Pipeline Memory:
+===================
+
+Data Collector uses memory when it runs a pipeline. To avoid causing out-of-memory errors on the host machine, you can configure the maximum amount 
+of memory that can be used for the pipeline.
+Best practice is to configure the pipeline to use up to 65% of the Data Collector Java heap size. For example, with the default Data Collector 
+Java heap size of 1024 MB, the highest setting for the pipeline memory should be 665 MB.
+
+
+
+
+Need to explore:
+=================
+
+Cluster pipeline
+Multithreaded pipeline
+Event generations
